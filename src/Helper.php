@@ -80,8 +80,19 @@ class Helper
         }
 
         $reflector = static::getReflector($reflector);
+        if ($reflector instanceof ReflectionClass) {
+            $getConstructor = $reflector->getConstructor();
 
-        $parameters = $reflector->getParameters();
+            if ( (bool) $getConstructor ) {
+                $parameters = $getConstructor->getParameters();
+            } else {
+                $parameters = [];
+            }
+
+        } else {
+            $parameters = $reflector->getParameters();    
+        }
+        
 
         $arr = [];
         
@@ -124,7 +135,7 @@ class Helper
             return new ReflectionFunction($reflector);
         }
 
-        if (\is_string($callable)) {
+        if (\is_string($reflector)) {
             if (\class_exists($reflector)) {
                 return new ReflectionClass($reflector);
             }

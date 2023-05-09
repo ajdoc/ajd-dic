@@ -726,6 +726,8 @@ class AjDic implements ArrayAccess, ContainerizeInterface
      */
     public function makeWith($abstract, array $parameters = [])
     {
+        $parameters = Helper::namedParamatersToArry($abstract, $parameters);
+
         return $this->make($abstract, $parameters);
     }
 
