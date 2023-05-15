@@ -50,12 +50,18 @@ class Helper
      * @param  \ReflectionParameter  $parameter
      * @return string|null
      */
-    public static function getParameterClassName($parameter)
+    public static function getParameterClassName($parameter, $exemptEnum = false)
     {
         $type = $parameter->getType();
 
         if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
             return null;
+        }
+
+        if ($exemptEnum) {
+            if($parameter->getClass()->isEnum()) {
+                return null;
+            }
         }
 
         $name = $type->getName();
@@ -97,7 +103,7 @@ class Helper
         $arr = [];
         
         foreach ($parameters as $key => $parameter) {
-            $className = static::getParameterClassName($parameter);
+            $className = static::getParameterClassName($parameter, true);
 
             if (null !== $className) {
                 array_splice($args, $parameter->getPosition(), 0, $className);
@@ -109,7 +115,7 @@ class Helper
 
             if (array_key_exists($position, $args)) {
 
-                $className = static::getParameterClassName($parameter);
+                $className = static::getParameterClassName($parameter, true);
 
                 if(null === $className) {
                     $arr[$parameter->getName()] = $args[$position];
