@@ -110,7 +110,7 @@ class Helper
                 $addToArr = true;
 
                 if (isset($args[$key]) && is_object($args[$key])) {
-                    if (get_class($args[$key]) == $className) {
+                    if (get_class($args[$key]) == $className || $args[$key] instanceof $className) {
                         $addToArr = false;
                     }
                 }
