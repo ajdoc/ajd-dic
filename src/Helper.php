@@ -99,14 +99,27 @@ class Helper
             $parameters = $reflector->getParameters();    
         }
         
-
         $arr = [];
         
         foreach ($parameters as $key => $parameter) {
+
             $className = static::getParameterClassName($parameter, true);
 
             if (null !== $className) {
-                array_splice($args, $parameter->getPosition(), 0, $className);
+
+                $addToArr = true;
+
+                if (isset($args[$key]) && is_object($args[$key])) {
+                    if (get_class($args[$key]) == $className) {
+                        $addToArr = false;
+                    }
+                }
+
+                if ($addToArr) {
+                    array_splice($args, $parameter->getPosition(), 0, $className);
+                } else {
+                    $arr[$parameter->getName()] = $args[$key];
+                }
             }
         }
 
@@ -122,7 +135,7 @@ class Helper
                 }
             }
         }
-
+        
         return $arr;
     }
 
