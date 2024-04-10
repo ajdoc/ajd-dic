@@ -59,7 +59,7 @@ class Helper
         }
 
         if ($exemptEnum) {
-            if($parameter->getClass()->isEnum()) {
+            if(enum_exists($parameter->getType()->getName())) {
                 return null;
             }
         }
