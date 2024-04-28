@@ -81,7 +81,7 @@ class Helper
 
     public static function namedParamatersToArry($reflector, array $args)
     {
-        if (!array_is_list($args)) {
+        if (! array_is_list($args)) {
             return $args;
         }
 
@@ -108,15 +108,23 @@ class Helper
             if (null !== $className) {
 
                 $addToArr = true;
+                $hasDefaultVal = false;
 
                 if (isset($args[$key]) && is_object($args[$key])) {
                     if (get_class($args[$key]) == $className || $args[$key] instanceof $className) {
                         $addToArr = false;
                     }
+                } else {
+                    if($parameter->isDefaultValueAvailable()) {
+                        $hasDefaultVal = true;
+                        $arr[$parameter->getName()] = $parameter->getDefaultValue();
+                    }
                 }
 
                 if ($addToArr) {
-                    array_splice($args, $parameter->getPosition(), 0, $className);
+                    if (! $hasDefaultVal) {
+                        array_splice($args, $parameter->getPosition(), 0, $className);
+                    }
                 } else {
                     $arr[$parameter->getName()] = $args[$key];
                 }
@@ -129,7 +137,7 @@ class Helper
             if (array_key_exists($position, $args)) {
 
                 $className = static::getParameterClassName($parameter, true);
-
+                
                 if(null === $className) {
                     $arr[$parameter->getName()] = $args[$position];
                 }
@@ -142,7 +150,6 @@ class Helper
     public static function getReflector($reflector)
     {
         if (is_array($reflector)) {
-
             if (! \method_exists($reflector[0], $reflector[1])) {
                 throw new InvalidArgumentException('Invalid Reflector.');
             }
